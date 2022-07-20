@@ -17,6 +17,7 @@ app.use(express.static('public'));
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
+
 let responseData = {};
 
 app.get('/api/', function(req,res) {
@@ -34,11 +35,13 @@ app.get('/api/:param', function(req,res) {
     responseData["unix"] = unixnum,
     responseData["utc"] = new Date(unixnum).toUTCString()
   }
-  if(dateSt instanceof Date && !isNaN(dateSt)){
+  else if(dateSt instanceof Date && !isNaN(dateSt)){
       responseData["unix"] = dateSt.getTime(),
       responseData["utc"] = dateSt.toUTCString()
   }
-    responseData["error"] = "Invalid Date"
+  else{
+      responseData["error"] = "Invalid Date"
+  }
     res.json(responseData)
   })
 
@@ -46,8 +49,6 @@ app.get('/api/:param', function(req,res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
-
-
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
