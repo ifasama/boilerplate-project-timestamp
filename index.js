@@ -17,7 +17,30 @@ app.use(express.static('public'));
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
+let responseData = {};
 
+app.get('/api/', function(req,res) {
+    responseData["unix"] = Date.now()
+    responseData["utc"] =  new Date(Date()).toUTCString()
+    res.json(responseData)
+})
+
+//Timestamp Microservice
+app.get('/api/:param', function(req,res) {
+  let { param } = req.params;
+  let dateSt = new Date(param);
+  let unixnum = Number(param);
+  if(!isNaN(unixnum)){
+    responseData["unix"] = unixnum,
+    responseData["utc"] = new Date(unixnum).toUTCString()
+  }
+  if(dateSt instanceof Date && !isNaN(dateSt)){
+      responseData["unix"] = dateSt.getTime(),
+      responseData["utc"] = dateSt.toUTCString()
+  }
+    responseData["error"] = "Invalid Date"
+    res.json(responseData)
+  })
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
